@@ -3,13 +3,34 @@ import useApi from '../hooks/useApi';
 import { generateEmail } from '../services/api';
 import Loader from '../components/Loader';
 import ResultCard from '../components/ResultCard';
-import { HiOutlineMail, HiOutlineClipboardCopy, HiOutlineRefresh } from 'react-icons/hi';
+
+const FIELDS = [
+  { key: 'name',      label: 'Your Name',   placeholder: 'John Doe' },
+  { key: 'niche',     label: 'Niche',       placeholder: 'Tech, Fitness…' },
+  { key: 'followers', label: 'Followers',   placeholder: '50000', type: 'number' },
+  { key: 'brand',     label: 'Brand Name',  placeholder: 'Nike, Apple…' },
+];
+
+function IconCopy() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+    </svg>
+  );
+}
+function IconRefresh() {
+  return (
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+    </svg>
+  );
+}
 
 export default function EmailGenerator() {
   const { data, loading, error, execute } = useApi(generateEmail);
   const [form, setForm] = useState({ name: '', niche: '', followers: '', brand: '' });
   const [copied, setCopied] = useState(false);
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const set = k => e => setForm({ ...form, [k]: e.target.value });
 
   const copyEmail = () => {
     if (!data) return;
@@ -19,58 +40,81 @@ export default function EmailGenerator() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-20">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)' }}>
-          <HiOutlineMail style={{ color: '#10B981' }} size={22} />
+    <div className="page-inner">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-icon" style={{ background: 'rgba(52,211,153,0.12)', border: '1px solid rgba(52,211,153,0.25)' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/>
+          </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Email Generator</h1>
-          <p className="text-gray-500 text-sm">Professional sponsorship outreach emails</p>
+          <h1 className="page-title">Email Generator</h1>
+          <p className="page-subtitle">Professional sponsorship outreach emails in one click</p>
         </div>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); execute(form); }} className="glass-strong gradient-border p-7 space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {[['name','Your Name','John Doe'],['niche','Niche','Tech, Fitness...'],['followers','Followers','50000'],['brand','Brand Name','Nike, Apple...']].map(([k,label,ph]) => (
-            <div key={k}>
-              <label className="text-sm text-gray-400 mb-2 block font-medium">{label}</label>
-              <input className="input-glass" placeholder={ph} value={form[k]} onChange={set(k)} required type={k==='followers'?'number':'text'} />
+      {/* Form */}
+      <form
+        id="email-generator-form"
+        onSubmit={e => { e.preventDefault(); execute(form); }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+      >
+        <div className="form-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
+          {FIELDS.map(({ key, label, placeholder, type = 'text' }) => (
+            <div key={key}>
+              <label className="field-label" htmlFor={`email-${key}`}>{label}</label>
+              <input
+                id={`email-${key}`}
+                className="field-input"
+                type={type}
+                placeholder={placeholder}
+                value={form[key]}
+                onChange={set(key)}
+                required
+              />
             </div>
           ))}
         </div>
-        <button type="submit" disabled={loading} className="btn-gradient w-full py-4">
-          <span>{loading ? 'Generating...' : '✦ Generate Email'}</span>
-        </button>
+        <div>
+          <button type="submit" disabled={loading} className="btn-primary" id="email-generate-btn">
+            {loading ? 'Generating…' : 'Generate Email'}
+          </button>
+        </div>
       </form>
 
-      {error && <div className="glass-strong p-4 rounded-2xl text-red-400 text-sm">{error}</div>}
-      {loading && <Loader text="Crafting your email..." />}
+      {error && <div className="error-banner" style={{ marginTop: 16 }}>{error}</div>}
+      {loading && <Loader text="Crafting your outreach email…" />}
 
       {data && (
-        <ResultCard>
-          <div className="flex items-center justify-between mb-5">
-            <h3 className="text-base font-bold gradient-text-2">Generated Email</h3>
-            <div className="flex gap-2">
-              <button onClick={copyEmail} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all" style={{ background: 'rgba(255,255,255,0.05)', color: '#9CA3AF' }}>
-                <HiOutlineClipboardCopy />{copied ? '✓ Copied!' : 'Copy'}
-              </button>
-              <button onClick={() => execute(form)} disabled={loading} className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all" style={{ background: 'rgba(124,58,237,0.15)', color: '#A78BFA', border: '1px solid rgba(124,58,237,0.25)' }}>
-                <HiOutlineRefresh />Regenerate
-              </button>
+        <div style={{ marginTop: 24 }}>
+          <ResultCard>
+            {/* Toolbar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+              <div className="result-card-title" style={{ marginBottom: 0 }}>Generated Email</div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={copyEmail} className="btn-ghost" id="email-copy-btn">
+                  <IconCopy />{copied ? 'Copied!' : 'Copy'}
+                </button>
+                <button onClick={() => execute(form)} disabled={loading} className="btn-ghost" id="email-regen-btn">
+                  <IconRefresh />Regenerate
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <p className="text-xs text-gray-600 mb-1 uppercase tracking-widest">Subject</p>
-              <p className="text-white font-semibold">{data.subject}</p>
+
+            {/* Subject */}
+            <div className="email-section" style={{ marginBottom: 10 }}>
+              <div className="email-label">Subject</div>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text)', fontWeight: 600 }}>{data.subject}</p>
             </div>
-            <div className="p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-              <p className="text-xs text-gray-600 mb-2 uppercase tracking-widest">Body</p>
-              <p className="text-gray-300 whitespace-pre-wrap leading-loose text-sm">{data.body}</p>
+
+            {/* Body */}
+            <div className="email-section">
+              <div className="email-label">Body</div>
+              <p style={{ fontSize: '0.8375rem', color: 'var(--text-2)', whiteSpace: 'pre-wrap', lineHeight: 1.75 }}>{data.body}</p>
             </div>
-          </div>
-        </ResultCard>
+          </ResultCard>
+        </div>
       )}
     </div>
   );

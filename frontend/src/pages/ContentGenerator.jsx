@@ -3,76 +3,102 @@ import useApi from '../hooks/useApi';
 import { generateContent } from '../services/api';
 import Loader from '../components/Loader';
 import ResultCard from '../components/ResultCard';
-import ScrollReveal from '../components/ScrollReveal';
-import { HiOutlineLightBulb } from 'react-icons/hi';
+
+const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
 export default function ContentGenerator() {
   const { data, loading, error, execute } = useApi(generateContent);
   const [niche, setNiche] = useState('');
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8 pb-20">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(6,182,212,0.15)', border: '1px solid rgba(6,182,212,0.3)' }}>
-          <HiOutlineLightBulb style={{ color: '#06B6D4' }} size={22} />
+    <div className="page-inner">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-icon" style={{ background: 'rgba(96,165,250,0.12)', border: '1px solid rgba(96,165,250,0.25)' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3 6H9C7.5 13.5 6 11.5 6 9a6 6 0 0 1 6-6z"/>
+          </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Content Generator</h1>
-          <p className="text-gray-500 text-sm">Reels, posts, hashtags & weekly plan</p>
+          <h1 className="page-title">Content Generator</h1>
+          <p className="page-subtitle">Reels, posts, hashtags & weekly content plan</p>
         </div>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); execute({ niche }); }} className="glass-strong gradient-border p-7 flex flex-col sm:flex-row gap-5">
-        <div className="flex-1">
-          <label className="text-sm text-gray-400 mb-2 block font-medium">Your Niche</label>
-          <input className="input-glass" placeholder="Fitness, Tech, Cooking..." value={niche} onChange={e => setNiche(e.target.value)} required />
+      {/* Form */}
+      <form
+        id="content-generator-form"
+        onSubmit={e => { e.preventDefault(); execute({ niche }); }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+      >
+        <div className="form-card" style={{ display: 'flex', gap: 16, alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: 200 }}>
+            <label className="field-label" htmlFor="content-niche">Your Niche</label>
+            <input
+              id="content-niche"
+              className="field-input"
+              placeholder="Fitness, Tech, Cooking…"
+              value={niche}
+              onChange={e => setNiche(e.target.value)}
+              required
+            />
+          </div>
+          <button type="submit" disabled={loading} className="btn-primary" id="content-generate-btn" style={{ flexShrink: 0 }}>
+            {loading ? 'Generating…' : 'Generate Plan'}
+          </button>
         </div>
-        <button type="submit" disabled={loading} className="btn-gradient self-end h-[50px] px-8 whitespace-nowrap">
-          <span>{loading ? 'Generating...' : '✦ Generate'}</span>
-        </button>
       </form>
 
-      {error && <div className="glass-strong p-4 rounded-2xl text-red-400 text-sm">{error}</div>}
-      {loading && <Loader text="Crafting your content plan..." />}
+      {error && <div className="error-banner" style={{ marginTop: 16 }}>{error}</div>}
+      {loading && <Loader text="Crafting your content plan…" />}
 
       {data && (
-        <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="reveal">
-            <ResultCard title="🎬 Reel Ideas">
-              <ol className="space-y-2 list-decimal list-inside">
-                {data.reelIdeas?.map((r, i) => <li key={i} className="text-sm text-gray-300">{r}</li>)}
-              </ol>
+        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+            {/* Reel Ideas */}
+            <ResultCard title="Reel Ideas">
+              {data.reelIdeas?.map((r, i) => (
+                <div key={i} className="list-item">
+                  <div className="list-item-num">{i + 1}</div>
+                  <span>{r}</span>
+                </div>
+              ))}
+            </ResultCard>
+
+            {/* Post Ideas */}
+            <ResultCard title="Post Ideas">
+              {data.postIdeas?.map((p, i) => (
+                <div key={i} className="list-item">
+                  <div className="list-item-num">{i + 1}</div>
+                  <span>{p}</span>
+                </div>
+              ))}
             </ResultCard>
           </div>
-          <div className="reveal">
-            <ResultCard title="📝 Post Ideas">
-              <ol className="space-y-2 list-decimal list-inside">
-                {data.postIdeas?.map((p, i) => <li key={i} className="text-sm text-gray-300">{p}</li>)}
-              </ol>
-            </ResultCard>
-          </div>
-          <div className="reveal">
-            <ResultCard title="# Hashtags">
-              <div className="flex flex-wrap gap-2">
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
+            {/* Hashtags */}
+            <ResultCard title="Hashtags">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {data.hashtags?.map((h, i) => (
-                  <span key={i} className="badge badge-cyan">#{h.replace(/^#/, '')}</span>
+                  <span key={i} className="chip chip-blue">#{h.replace(/^#/, '')}</span>
                 ))}
               </div>
             </ResultCard>
-          </div>
-          <div className="reveal">
-            <ResultCard title="📅 Weekly Plan">
-              <div className="space-y-3">
-                {data.weeklyPlan?.map((d, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <span className="badge badge-violet shrink-0 min-w-[56px] justify-center">{d.day}</span>
-                    <p className="text-sm text-gray-300">{d.idea}</p>
-                  </div>
-                ))}
-              </div>
+
+            {/* Weekly Plan */}
+            <ResultCard title="Weekly Plan">
+              {data.weeklyPlan?.map((d, i) => (
+                <div key={i} className="list-item" style={{ alignItems: 'flex-start' }}>
+                  <span className="chip chip-accent" style={{ flexShrink: 0, minWidth: 36, textAlign: 'center' }}>
+                    {DAYS[i] ?? d.day}
+                  </span>
+                  <span style={{ lineHeight: 1.6 }}>{d.idea}</span>
+                </div>
+              ))}
             </ResultCard>
           </div>
-        </ScrollReveal>
+        </div>
       )}
     </div>
   );

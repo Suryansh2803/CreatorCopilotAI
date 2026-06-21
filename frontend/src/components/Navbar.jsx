@@ -1,50 +1,55 @@
-import { useEffect, useRef } from 'react';
-import { HiOutlineSparkles } from 'react-icons/hi';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLocation } from 'react-router-dom';
+import { MenuButton } from './Sidebar';
 
-gsap.registerPlugin(ScrollTrigger);
+const ROUTE_LABELS = {
+  '/':             'Overview',
+  '/profile':      'Profile Analyzer',
+  '/content':      'Content Generator',
+  '/brands':       'Brand Finder',
+  '/email':        'Email Generator',
+  '/authenticity': 'Authenticity Checker',
+};
 
-export default function Navbar() {
-  const navRef = useRef(null);
-
-  useEffect(() => {
-    const onScroll = () => {
-      if (!navRef.current) return;
-      const scrolled = window.scrollY > 30;
-      navRef.current.style.background = scrolled
-        ? 'rgba(3, 0, 20, 0.85)'
-        : 'transparent';
-      navRef.current.style.borderBottomColor = scrolled
-        ? 'rgba(124,58,237,0.2)'
-        : 'transparent';
-      navRef.current.style.backdropFilter = scrolled ? 'blur(24px)' : 'none';
-    };
-    window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+export default function Navbar({ sidebarOpen, onToggleSidebar }) {
+  const { pathname } = useLocation();
+  const label = ROUTE_LABELS[pathname] ?? 'CreatorCopilot';
 
   return (
-    <nav
-      ref={navRef}
-      className="fixed top-0 right-0 left-0 md:left-64 z-40 px-6 py-4 flex items-center justify-between transition-all duration-500"
-      style={{ borderBottom: '1px solid transparent' }}
-    >
-      <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-cyan-500 flex items-center justify-center md:hidden shadow-lg shadow-violet-500/30">
-          <HiOutlineSparkles className="text-white text-lg" />
-        </div>
-        <span className="text-sm font-semibold gradient-text hidden sm:block">CreatorCopilot AI</span>
-      </div>
-      <div className="flex items-center gap-4">
-        <span className="badge badge-violet hidden sm:flex">
-          <span className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
-          CC AI
-        </span>
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-violet-500/30">
-          C
+    <header className="topbar">
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <MenuButton open={sidebarOpen} onToggle={onToggleSidebar} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text)' }}>{label}</span>
         </div>
       </div>
-    </nav>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{
+          padding: '4px 10px',
+          background: 'var(--accent-dim)',
+          border: '1px solid var(--accent-glow)',
+          borderRadius: 5,
+          fontSize: '0.7rem',
+          fontWeight: 700,
+          color: 'var(--accent)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.07em',
+          display: 'flex', alignItems: 'center', gap: 5,
+        }}>
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: 'var(--accent)', display: 'inline-block', flexShrink: 0 }} />
+          Live
+        </div>
+        <div style={{
+          width: 30, height: 30,
+          borderRadius: 7,
+          background: 'var(--bg-2)',
+          border: '1px solid var(--border)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          color: 'var(--text)',
+          fontFamily: 'Syne, sans-serif',
+        }}>C</div>
+      </div>
+    </header>
   );
 }

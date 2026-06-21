@@ -1,108 +1,79 @@
 import { NavLink } from 'react-router-dom';
-import {
-  HiOutlineSparkles, HiOutlineHome, HiOutlineUser,
-  HiOutlineLightBulb, HiOutlineBriefcase, HiOutlineMail,
-  HiOutlineShieldCheck, HiOutlineMenuAlt3, HiOutlineX
-} from 'react-icons/hi';
 import { useState } from 'react';
 
-const links = [
-  { to: '/', icon: HiOutlineHome, label: 'Dashboard', color: '#A78BFA' },
-  { to: '/profile', icon: HiOutlineUser, label: 'Profile Analyzer', color: '#7C3AED' },
-  { to: '/content', icon: HiOutlineLightBulb, label: 'Content Generator', color: '#06B6D4' },
-  { to: '/brands', icon: HiOutlineBriefcase, label: 'Brand Finder', color: '#F59E0B' },
-  { to: '/email', icon: HiOutlineMail, label: 'Email Generator', color: '#10B981' },
-  { to: '/authenticity', icon: HiOutlineShieldCheck, label: 'Authenticity', color: '#EC4899' },
+const LINKS = [
+  { to: '/',             label: 'Overview',      icon: IconGrid },
+  { to: '/profile',      label: 'Profile',       icon: IconUser },
+  { to: '/content',      label: 'Content',       icon: IconBulb },
+  { to: '/brands',       label: 'Brands',        icon: IconBag },
+  { to: '/email',        label: 'Email',         icon: IconMail },
+  { to: '/authenticity', label: 'Authenticity',  icon: IconShield },
 ];
 
-export default function Sidebar() {
-  const [open, setOpen] = useState(false);
+function IconGrid()   { return <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="1" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2"/><rect x="8.5" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2"/><rect x="1" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2"/></svg>; }
+function IconUser()   { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>; }
+function IconBulb()   { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21h6M12 3a6 6 0 0 1 6 6c0 2.5-1.5 4.5-3 6H9C7.5 13.5 6 11.5 6 9a6 6 0 0 1 6-6z"/></svg>; }
+function IconBag()    { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2M8 7V5a2 2 0 0 1 4 0"/></svg>; }
+function IconMail()   { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>; }
+function IconShield() { return <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l7 3.5V10c0 5-3.5 8.5-7 10C8.5 18.5 5 15 5 10V5.5L12 2z"/><path d="m9 12 2 2 4-4" /></svg>; }
+function IconMenu()   { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>; }
+function IconClose()  { return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>; }
 
+export function MenuButton({ open, onToggle }) {
+  return (
+    <button onClick={onToggle} className="menu-btn" id="sidebar-menu-btn" aria-label="Toggle menu">
+      {open ? <IconClose /> : <IconMenu />}
+    </button>
+  );
+}
+
+export default function Sidebar({ open, onClose }) {
   return (
     <>
-      <button
-        onClick={() => setOpen(!open)}
-        className="fixed top-4 left-4 z-50 md:hidden w-10 h-10 rounded-xl glass-strong flex items-center justify-center"
-        style={{ color: '#A78BFA' }}
-      >
-        {open ? <HiOutlineX size={20} /> : <HiOutlineMenuAlt3 size={20} />}
-      </button>
-
-      {open && (
-        <div
-          className="fixed inset-0 z-40 md:hidden"
-          style={{ background: 'rgba(3,0,20,0.6)', backdropFilter: 'blur(4px)' }}
-          onClick={() => setOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 z-50 flex flex-col transition-transform duration-400 ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
-        style={{
-          background: 'rgba(3, 0, 20, 0.8)',
-          backdropFilter: 'blur(30px)',
-          borderRight: '1px solid rgba(124,58,237,0.12)',
-        }}
-      >
+      {open && <div className="sidebar-overlay" onClick={onClose} />}
+      <aside className={`sidebar${open ? ' open' : ''}`}>
         {/* Logo */}
-        <div className="p-6 flex items-center gap-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-          <div
-            className="w-11 h-11 rounded-2xl flex items-center justify-center relative"
-            style={{ background: 'linear-gradient(135deg, #7C3AED, #06B6D4)', boxShadow: '0 0 20px rgba(124,58,237,0.5)' }}
-          >
-            <HiOutlineSparkles className="text-white text-xl" />
-          </div>
-          <div>
-            <h2 className="font-bold text-white text-base leading-tight">CreatorCopilot</h2>
-            <p className="text-[10px] tracking-widest uppercase" style={{ color: '#6D28D9' }}>AI Suite</p>
+        <div style={{ height: 64, padding: '0 16px', display: 'flex', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{
+              width: 32, height: 32,
+              borderRadius: 7,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              flexShrink: 0,
+              overflow: 'hidden'
+            }}>
+              <img src="/logo.png" alt="CreatorCopilot Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+            </div>
+            <div>
+              <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '0.875rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>CreatorCopilot</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 1 }}>AI Suite</div>
+            </div>
           </div>
         </div>
 
-        {/* Nav links */}
-        <nav className="flex-1 py-6 px-3 space-y-1 overflow-y-auto no-scrollbar">
-          {links.map(({ to, icon: Icon, label, color }) => (
+        {/* Nav */}
+        <nav style={{ padding: '12px 10px', flex: 1, overflowY: 'auto' }} className="no-scrollbar">
+          <div style={{ fontSize: '0.65rem', fontWeight: 700, color: 'var(--text-3)', textTransform: 'uppercase', letterSpacing: '0.08em', padding: '8px 12px 6px', marginBottom: 2 }}>Tools</div>
+          {LINKS.map(({ to, label, icon: Icon }) => (
             <NavLink
               key={to}
               to={to}
               end={to === '/'}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `group flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium transition-all duration-300 ${isActive
-                  ? 'text-white'
-                  : 'text-gray-500 hover:text-gray-200'
-                }`
-              }
-              style={({ isActive }) => isActive ? {
-                background: `${color}18`,
-                boxShadow: `0 0 0 1px ${color}30, inset 0 0 20px ${color}08`,
-              } : {}}
+              onClick={onClose}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
             >
-              {({ isActive }) => (
-                <>
-                  <div
-                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-300"
-                    style={isActive
-                      ? { background: `${color}25`, color }
-                      : { color: '#4B5563' }
-                    }
-                  >
-                    <Icon size={18} />
-                  </div>
-                  <span>{label}</span>
-                  {isActive && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full" style={{ background: color, boxShadow: `0 0 6px ${color}` }} />
-                  )}
-                </>
-              )}
+              <Icon />
+              <span>{label}</span>
             </NavLink>
           ))}
         </nav>
 
         {/* Footer */}
-        <div className="p-4 m-3 mb-4 rounded-2xl" style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.12), rgba(6,182,212,0.08))', border: '1px solid rgba(124,58,237,0.12)' }}>
-          <p className="text-xs text-gray-500 mb-0.5">Powered by</p>
-          <p className="text-sm font-semibold gradient-text">CC AI</p>
-          <div className="glow-line mt-2 rounded-full" />
+        <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 500 }}>Powered by AI</span>
+          </div>
         </div>
       </aside>
     </>

@@ -1,28 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function CountUp({ target, duration = 2000, suffix = '' }) {
+export default function CountUp({ target = 0, duration = 1.4 }) {
   const [count, setCount] = useState(0);
-  const ref = useRef(null);
-  const started = useRef(false);
+  const frameRef = useRef(null);
 
   useEffect(() => {
-    const obs = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !started.current) {
-        started.current = true;
-        const start = performance.now();
-        const step = (now) => {
-          const progress = Math.min((now - start) / duration, 1);
-          const eased = 1 - Math.pow(1 - progress, 4);
-          setCount(Math.round(eased * target));
-          if (progress < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      }
-    }, { threshold: 0.5 });
-
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
+    if (target === 0) return;
+    const start = performance.now();
+    const tick = (now) => {
+      const t = Math.min((now - start) / (duration * 1000), 1);
+      const ease = 1 - Math.pow(1 - t, 3);
+      setCount(Math.round(ease * target));
+      if (t < 1) frameRef.current = requestAnimationFrame(tick);
+    };
+    frameRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frameRef.current);
   }, [target, duration]);
 
-  return <span ref={ref}>{count}{suffix}</span>;
+  return <>{count}</>;
 }

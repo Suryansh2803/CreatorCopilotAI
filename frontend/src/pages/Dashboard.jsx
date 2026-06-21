@@ -2,244 +2,258 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import ThreeScene from '../components/ThreeScene';
 import CountUp from '../components/CountUp';
-import ScrollReveal from '../components/ScrollReveal';
 import HealthBanner from '../components/HealthBanner';
 import { getStats } from '../services/api';
-import {
-  HiOutlineUser, HiOutlineLightBulb, HiOutlineBriefcase,
-  HiOutlineMail, HiOutlineShieldCheck, HiOutlineArrowRight,
-  HiOutlineSparkles, HiOutlineTrendingUp, HiOutlineCollection
-} from 'react-icons/hi';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const FEATURES = [
-  { path: '/profile',      title: 'Profile Analyzer',     desc: 'AI-powered insights on your creator profile strength, growth tips & monetization.', icon: HiOutlineUser,        color: '#7C3AED', bg: 'rgba(124,58,237,0.1)' },
-  { path: '/content',      title: 'Content Generator',    desc: 'Generate reel ideas, post concepts, hashtags & a full weekly content plan.', icon: HiOutlineLightBulb,   color: '#06B6D4', bg: 'rgba(6,182,212,0.1)' },
-  { path: '/brands',       title: 'Brand Finder',         desc: 'Discover brands matching your niche & audience for sponsorship deals.', icon: HiOutlineBriefcase,   color: '#F59E0B', bg: 'rgba(245,158,11,0.1)' },
-  { path: '/email',        title: 'Email Generator',      desc: 'Craft professional sponsorship outreach emails in one click.', icon: HiOutlineMail,        color: '#10B981', bg: 'rgba(16,185,129,0.1)' },
-  { path: '/authenticity', title: 'Authenticity Checker', desc: 'Verify engagement rates & detect fake follower patterns instantly.', icon: HiOutlineShieldCheck, color: '#EC4899', bg: 'rgba(236,72,153,0.1)' },
+  {
+    path: '/profile',
+    title: 'Profile Analyzer',
+    desc: 'AI insights on your creator strength, growth tips & monetization opportunities.',
+    tag: 'Analysis',
+    tagClass: 'chip-accent',
+    color: '#38bdf8',
+  },
+  {
+    path: '/content',
+    title: 'Content Generator',
+    desc: 'Reel ideas, post concepts, hashtags & a full weekly content calendar.',
+    tag: 'Generation',
+    tagClass: 'chip-blue',
+    color: '#60a5fa',
+  },
+  {
+    path: '/brands',
+    title: 'Brand Finder',
+    desc: 'Discover brands aligned with your niche for sponsorship deals.',
+    tag: 'Discovery',
+    tagClass: 'chip-amber',
+    color: '#f59e0b',
+  },
+  {
+    path: '/email',
+    title: 'Email Generator',
+    desc: 'Professional sponsorship outreach emails crafted in one click.',
+    tag: 'Outreach',
+    tagClass: 'chip-emerald',
+    color: '#34d399',
+  },
+  {
+    path: '/authenticity',
+    title: 'Authenticity Checker',
+    desc: 'Verify engagement quality and detect fake follower patterns.',
+    tag: 'Verification',
+    tagClass: 'chip-rose',
+    color: '#fb7185',
+  },
 ];
 
+const STATS = [
+  { label: 'Analyses Run',   suffix: '+',  key: 'total' },
+  { label: 'AI Tools',       value: 5                    },
+  { label: 'AI Models',      value: 1                    },
+];
+
+function ArrowIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+    </svg>
+  );
+}
+
+const TYPE_LABEL = { profile: 'Profile', content: 'Content', brand: 'Brand', email: 'Email', authenticity: 'Auth' };
+const TYPE_CLASS  = { profile: 'chip-accent', content: 'chip-blue', brand: 'chip-amber', email: 'chip-emerald', authenticity: 'chip-rose' };
+
 export default function Dashboard() {
-  const [stats, setStats] = useState({ total: 0, counts: {}, recent: [] });
-  const heroRef = useRef(null);
-  const titleRef = useRef(null);
-  const subtitleRef = useRef(null);
-  const badgeRef = useRef(null);
-  const sceneRef = useRef(null);
+  const [stats, setStats] = useState({ total: 0, recent: [] });
+  const gridRef = useRef(null);
+  const statsRef = useRef(null);
 
   useEffect(() => {
     getStats().then(r => setStats(r.data)).catch(() => {});
   }, []);
 
-  // Hero entrance animation
+  // ── Staggered card scroll animation ──
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.2 });
-    tl.fromTo(badgeRef.current, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power3.out' })
-      .fromTo(titleRef.current, { opacity: 0, y: 40, skewY: 2 }, { opacity: 1, y: 0, skewY: 0, duration: 0.9, ease: 'power3.out' }, '-=0.2')
-      .fromTo(subtitleRef.current, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-      .fromTo(sceneRef.current, { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 1.2, ease: 'power3.out' }, '-=0.9');
+    if (!gridRef.current) return;
+    const cards = gridRef.current.querySelectorAll('.feature-card');
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        cards,
+        {
+          opacity: 0,
+          y: 48,
+          scale: 0.95,
+          rotateX: 6,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          rotateX: 0,
+          duration: 0.75,
+          ease: 'power3.out',
+          stagger: 0.12,
+          scrollTrigger: {
+            trigger: gridRef.current,
+            start: 'top 82%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }, gridRef);
+
+    return () => ctx.revert();
   }, []);
 
-  // Parallax on the 3D scene
+  // ── Stats row animation ──
   useEffect(() => {
-    if (!sceneRef.current) return;
-    ScrollTrigger.create({
-      trigger: heroRef.current,
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1.5,
-      onUpdate: (self) => {
-        gsap.set(sceneRef.current, { y: self.progress * 80, opacity: 1 - self.progress * 0.6 });
-      }
-    });
+    if (!statsRef.current) return;
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        statsRef.current.children,
+        { opacity: 0, y: 24 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          ease: 'power2.out',
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: statsRef.current,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
+        }
+      );
+    }, statsRef);
+    return () => ctx.revert();
   }, []);
-
-  // Staggered card animations
-  useEffect(() => {
-    gsap.fromTo('.feature-card', { opacity: 0, y: 60, scale: 0.92 }, {
-      opacity: 1, y: 0, scale: 1,
-      duration: 0.7, ease: 'power3.out', stagger: 0.12,
-      scrollTrigger: { trigger: '.features-grid', start: 'top 80%' }
-    });
-  }, []);
-
-  const typeLabels = { profile: 'Profile', content: 'Content', brand: 'Brand', email: 'Email', authenticity: 'Authenticity' };
-  const typeColors = { profile: '#7C3AED', content: '#06B6D4', brand: '#F59E0B', email: '#10B981', authenticity: '#EC4899' };
 
   return (
-    <div className="max-w-7xl mx-auto space-y-24 pb-20">
+    <div className="page-inner-wide">
       <HealthBanner />
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative min-h-[80vh] flex items-center">
-        <div className="flex-1 max-w-2xl">
-          <div ref={badgeRef} className="opacity-0 mb-6">
-            <span className="badge badge-violet">
-              <HiOutlineSparkles size={12} />
-              AI-Powered Creator Suite
-            </span>
-          </div>
-
-          <h1 ref={titleRef} className="opacity-0 text-5xl md:text-7xl font-extrabold leading-none tracking-tight mb-6">
-            <span className="gradient-text">Create.</span>
-            <br />
-            <span style={{ color: '#E2E8F0' }}>Grow.</span>
-            <br />
-            <span className="gradient-text">Monetize.</span>
-          </h1>
-
-          <p ref={subtitleRef} className="opacity-0 text-lg text-gray-400 max-w-lg leading-relaxed mb-8">
-            Your AI copilot for content creation — analyze profiles, generate ideas, find brand deals, and verify authenticity with Gemini 2.5.
-          </p>
-
+      <div style={{ marginBottom: 56, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+        <div style={{ marginBottom: 8 }}>
+          <span className="chip chip-accent" style={{ fontFamily: 'Syne, sans-serif' }}>AI Creator Suite</span>
+        </div>
+        <h1 style={{
+          fontFamily: 'Syne, sans-serif',
+          fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
+          fontWeight: 800,
+          color: 'var(--text)',
+          lineHeight: 1.08,
+          letterSpacing: '-0.03em',
+          marginTop: 14,
+          maxWidth: 700,
+        }}>
+          Your AI copilot<br />
+          <span style={{ color: 'var(--accent)' }}>for creators.</span>
+        </h1>
+        <p style={{ fontSize: '0.9375rem', color: 'var(--text-3)', marginTop: 16, maxWidth: 520, lineHeight: 1.65 }}>
+          Analyze profiles, generate content, find brand deals, and verify authenticity — all powered by AI.
+        </p>
+        <div style={{ marginTop: 24 }}>
           <Link to="/profile">
-            <button className="btn-gradient text-base px-8 py-4">
-              <span className="flex items-center gap-2">Get Started <HiOutlineArrowRight /></span>
+            <button className="btn-primary" id="dashboard-get-started">
+              Get started
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
             </button>
           </Link>
         </div>
+      </div>
 
-        {/* 3D Scene */}
-        <div ref={sceneRef} className="opacity-0 absolute right-0 top-1/2 -translate-y-1/2 w-[380px] h-[380px] hidden lg:block">
-          <ThreeScene />
-        </div>
-      </section>
-
-      {/* ── Glow divider ── */}
-      <div className="glow-line" />
-
-      {/* ── Stats ── */}
-      <ScrollReveal>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 reveal">
-          {[
-            { label: 'Analyses Run', value: stats.total || 0, icon: HiOutlineTrendingUp, color: '#7C3AED', suffix: '+' },
-            { label: 'AI Tools', value: 5, icon: HiOutlineSparkles, color: '#06B6D4' },
-            { label: 'Models Used', value: 1, icon: HiOutlineCollection, color: '#EC4899', suffix: '' },
-          ].map((s, i) => (
-            <div key={i} className="glass-strong p-6 rounded-2xl flex items-center gap-5 gradient-border">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
-                style={{ background: `${s.color}18`, border: `1px solid ${s.color}30` }}>
-                <s.icon size={24} style={{ color: s.color }} />
-              </div>
-              <div>
-                <div className="stat-number">
-                  <CountUp target={s.value} />{s.suffix}
-                </div>
-                <p className="text-sm text-gray-500 mt-1">{s.label}</p>
-              </div>
+      {/* ── Stats row ── */}
+      <div ref={statsRef} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 12, marginBottom: 48 }}>
+        {STATS.map((s, i) => (
+          <div key={i} className="stat-box" style={{ opacity: 0 }}>
+            <div className="stat-value">
+              <CountUp target={s.value ?? stats.total ?? 0} />
+              {s.suffix || ''}
             </div>
-          ))}
-        </div>
-      </ScrollReveal>
-
-      {/* ── Feature Cards ── */}
-      <section>
-        <ScrollReveal>
-          <div className="flex items-center justify-between mb-8 reveal">
-            <div>
-              <h2 className="text-3xl font-bold text-white">AI Tools</h2>
-              <p className="text-gray-500 mt-1">Everything you need to grow as a creator</p>
-            </div>
-            <div className="hidden sm:block glow-line w-32" />
+            <div className="stat-label">{s.label}</div>
           </div>
-        </ScrollReveal>
+        ))}
+      </div>
 
-        <div className="features-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map((f) => (
-            <Link key={f.path} to={f.path} className="feature-card opacity-0">
-              <div
-                className="group glass-strong card-3d p-7 h-full flex flex-col rounded-2xl transition-all duration-400"
-                style={{ border: `1px solid ${f.color}15` }}
-              >
-                {/* Icon */}
-                <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3"
-                  style={{ background: f.bg, border: `1px solid ${f.color}30` }}>
-                  <f.icon size={26} style={{ color: f.color }} />
-                </div>
+      {/* ── Divider + section heading ── */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
+        <h2 className="section-heading">Tools</h2>
+        <div className="divider" style={{ flex: 1 }} />
+        <span style={{ fontSize: '0.75rem', color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.06em' }}>{FEATURES.length} available</span>
+      </div>
 
-                <h3 className="text-white font-bold text-xl mb-3">{f.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed flex-1">{f.desc}</p>
-
-                {/* Arrow */}
-                <div className="flex items-center gap-2 mt-5 text-sm font-semibold opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-0 group-hover:translate-x-1"
-                  style={{ color: f.color }}>
-                  Open Tool <HiOutlineArrowRight />
-                </div>
-
-                {/* Bottom accent line */}
-                <div className="absolute bottom-0 left-6 right-6 h-px rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-400"
-                  style={{ background: `linear-gradient(90deg, transparent, ${f.color}, transparent)` }} />
+      {/* ── Feature grid ── */}
+      <div
+        ref={gridRef}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+          gap: 14,
+          marginBottom: 48,
+          perspective: '1200px',
+        }}
+      >
+        {FEATURES.map(f => (
+          <Link to={f.path} key={f.path} id={`dashboard-tool-${f.path.slice(1) || 'home'}`} style={{ textDecoration: 'none' }}>
+            <div className="feature-card">
+              <div className="feature-arrow" style={{ color: 'var(--text-3)' }}><ArrowIcon /></div>
+              <div style={{ marginBottom: 14 }}>
+                <span className={`chip ${f.tagClass}`}>{f.tag}</span>
               </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+              <h3 style={{ fontFamily: 'Syne, sans-serif', fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: 8 }}>{f.title}</h3>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--text-3)', lineHeight: 1.65 }}>{f.desc}</p>
+              <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: '0.75rem', color: f.color, fontWeight: 600 }}>Open tool</span>
+                <div style={{ width: 20, height: 20, borderRadius: 5, background: `${f.color}18`, border: `1px solid ${f.color}30`, display: 'flex', alignItems: 'center', justifyContent: 'center', color: f.color }}>
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </div>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
 
       {/* ── Recent Analyses ── */}
-      {stats.recent.length > 0 && (
-        <ScrollReveal>
-          <section className="reveal">
-            <h2 className="text-3xl font-bold text-white mb-8">Recent Analyses</h2>
-            <div className="glass-strong rounded-2xl overflow-hidden gradient-border">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                      <th className="text-left p-5 text-gray-500 font-medium">Type</th>
-                      <th className="text-left p-5 text-gray-500 font-medium">Input Summary</th>
-                      <th className="text-left p-5 text-gray-500 font-medium">Date</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {stats.recent.map((item, i) => (
-                      <tr key={i} className="hover:bg-white/[0.02] transition-colors"
-                        style={{ borderBottom: i < stats.recent.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none' }}>
-                        <td className="p-5">
-                          <span className="badge" style={{
-                            background: `${typeColors[item.type]}15`,
-                            color: typeColors[item.type],
-                            border: `1px solid ${typeColors[item.type]}30`
-                          }}>
-                            {typeLabels[item.type] || item.type}
-                          </span>
-                        </td>
-                        <td className="p-5 text-gray-400 max-w-xs truncate font-mono text-xs">
-                          {JSON.stringify(item.input).slice(0, 70)}…
-                        </td>
-                        <td className="p-5 text-gray-500 text-xs">
-                          {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-        </ScrollReveal>
-      )}
-
-      {/* ── CTA section ── */}
-      <ScrollReveal>
-        <section className="reveal text-center py-16 relative overflow-hidden rounded-3xl glass-strong gradient-border">
-          {/* Background glow */}
-          <div className="absolute inset-0 pointer-events-none"
-            style={{ background: 'radial-gradient(ellipse at center, rgba(124,58,237,0.08) 0%, transparent 70%)' }} />
-          <div className="relative z-10">
-            <h2 className="text-4xl font-extrabold gradient-text mb-4">Ready to grow?</h2>
-            <p className="text-gray-400 text-lg mb-8 max-w-lg mx-auto">Start with a profile analysis and unlock your full creator potential.</p>
-            <Link to="/profile">
-              <button className="btn-gradient text-base px-10 py-4">
-                <span>Analyze My Profile</span>
-              </button>
-            </Link>
+      {stats.recent?.length > 0 && (
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+            <h2 className="section-heading">Recent Activity</h2>
+            <div className="divider" style={{ flex: 1 }} />
           </div>
-        </section>
-      </ScrollReveal>
+          <div className="result-card" style={{ padding: 0, overflow: 'hidden' }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Input</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {stats.recent.map((item, i) => (
+                  <tr key={i}>
+                    <td><span className={`chip ${TYPE_CLASS[item.type] || 'chip-accent'}`}>{TYPE_LABEL[item.type] || item.type}</span></td>
+                    <td style={{ maxWidth: 320, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                      {JSON.stringify(item.input).slice(0, 70)}…
+                    </td>
+                    <td style={{ color: 'var(--text-3)', fontSize: '0.75rem' }}>
+                      {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

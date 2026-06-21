@@ -4,95 +4,135 @@ import { checkAuthenticity } from '../services/api';
 import Loader from '../components/Loader';
 import ResultCard from '../components/ResultCard';
 import GaugeChart from '../components/GaugeChart';
-import ScrollReveal from '../components/ScrollReveal';
-import { HiOutlineShieldCheck } from 'react-icons/hi';
 
 const RISK_CONFIG = {
-  'Very Poor': { color: '#EF4444', label: '🔴 Very Poor', tip: 'Likely fake engagement. Investigate.' },
-  'Low':       { color: '#F59E0B', label: '🟡 Low',       tip: 'Below average. Focus on engagement.' },
-  'Good':      { color: '#10B981', label: '🟢 Good',      tip: 'Healthy engagement. Keep it up!' },
-  'Excellent': { color: '#A78BFA', label: '✦ Excellent',  tip: 'Outstanding! Your audience loves you.' },
+  'Very Poor': { color: '#ef4444', label: 'Very Poor',  tip: 'Likely fake engagement. Investigate immediately.' },
+  'Low':       { color: '#f59e0b', label: 'Low',        tip: 'Below average. Focus on authentic engagement.' },
+  'Good':      { color: '#34d399', label: 'Good',       tip: 'Healthy engagement. Keep creating great content.' },
+  'Excellent': { color: '#38bdf8', label: 'Excellent',  tip: 'Outstanding! Your audience genuinely loves you.' },
 };
+
+const RISK_RANGES = [
+  { range: '0–1%',  label: 'Very Poor', color: '#ef4444' },
+  { range: '1–3%',  label: 'Low',       color: '#f59e0b' },
+  { range: '3–6%',  label: 'Good',      color: '#34d399' },
+  { range: '6%+',   label: 'Excellent', color: '#38bdf8' },
+];
+
+const FIELDS = [
+  { key: 'followers',    label: 'Followers',     placeholder: '50000' },
+  { key: 'avgLikes',     label: 'Avg Likes',     placeholder: '2500' },
+  { key: 'avgComments',  label: 'Avg Comments',  placeholder: '150' },
+];
 
 export default function AuthenticityChecker() {
   const { data, loading, error, execute } = useApi(checkAuthenticity);
   const [form, setForm] = useState({ followers: '', avgLikes: '', avgComments: '' });
-  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value });
+  const set = k => e => setForm({ ...form, [k]: e.target.value });
   const risk = data ? RISK_CONFIG[data.riskLevel] : null;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-20">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(236,72,153,0.15)', border: '1px solid rgba(236,72,153,0.3)' }}>
-          <HiOutlineShieldCheck style={{ color: '#EC4899' }} size={22} />
+    <div className="page-inner">
+      {/* Header */}
+      <div className="page-header">
+        <div className="page-icon" style={{ background: 'rgba(251,113,133,0.12)', border: '1px solid rgba(251,113,133,0.25)' }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--rose)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M12 2l7 3.5V10c0 5-3.5 8.5-7 10C8.5 18.5 5 15 5 10V5.5L12 2z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
         </div>
         <div>
-          <h1 className="text-3xl font-bold gradient-text">Authenticity Checker</h1>
-          <p className="text-gray-500 text-sm">Detect fake followers & verify engagement</p>
+          <h1 className="page-title">Authenticity Checker</h1>
+          <p className="page-subtitle">Detect fake followers & verify engagement quality</p>
         </div>
       </div>
 
-      <form onSubmit={(e) => { e.preventDefault(); execute(form); }} className="glass-strong gradient-border p-7 space-y-5">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {[['followers','Followers','50000'],['avgLikes','Avg Likes','2500'],['avgComments','Avg Comments','150']].map(([k,label,ph]) => (
-            <div key={k}>
-              <label className="text-sm text-gray-400 mb-2 block font-medium">{label}</label>
-              <input className="input-glass" type="number" placeholder={ph} value={form[k]} onChange={set(k)} required />
+      {/* Form */}
+      <form
+        id="authenticity-form"
+        onSubmit={e => { e.preventDefault(); execute(form); }}
+        style={{ display: 'flex', flexDirection: 'column', gap: 16 }}
+      >
+        <div className="form-card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 16 }}>
+          {FIELDS.map(({ key, label, placeholder }) => (
+            <div key={key}>
+              <label className="field-label" htmlFor={`auth-${key}`}>{label}</label>
+              <input
+                id={`auth-${key}`}
+                className="field-input"
+                type="number"
+                placeholder={placeholder}
+                value={form[key]}
+                onChange={set(key)}
+                required
+              />
             </div>
           ))}
         </div>
-        <button type="submit" disabled={loading} className="btn-gradient w-full py-4">
-          <span>{loading ? 'Checking...' : '✦ Check Authenticity'}</span>
-        </button>
+        <div>
+          <button type="submit" disabled={loading} className="btn-primary" id="authenticity-check-btn">
+            {loading ? 'Analyzing…' : 'Check Authenticity'}
+          </button>
+        </div>
       </form>
 
-      {error && <div className="glass-strong p-4 rounded-2xl text-red-400 text-sm">{error}</div>}
-      {loading && <Loader text="Analyzing engagement patterns..." />}
+      {error && <div className="error-banner" style={{ marginTop: 16 }}>{error}</div>}
+      {loading && <Loader text="Analyzing engagement patterns…" />}
 
       {data && risk && (
-        <ScrollReveal className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 reveal">
+        <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {/* Gauge row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
             <ResultCard title="Engagement Rate">
-              <GaugeChart value={data.engagementRate} max={10} label="Engagement %" color={risk.color} />
+              <GaugeChart value={data.engagementRate} max={10} label="Rate %" color={risk.color} />
             </ResultCard>
             <ResultCard title="Authenticity Score">
               <GaugeChart value={data.authenticityScore} max={100} label="Score / 100" color={risk.color} />
             </ResultCard>
           </div>
 
-          <div className="reveal">
-            <ResultCard title="Risk Assessment">
-              <div className="flex items-start gap-5">
-                <div className="w-20 h-20 rounded-2xl flex items-center justify-center text-2xl font-black shrink-0"
-                  style={{ background: `${risk.color}15`, border: `1px solid ${risk.color}30`, color: risk.color, boxShadow: `0 0 20px ${risk.color}20` }}>
-                  {data.authenticityScore}
-                </div>
-                <div className="flex-1">
-                  <p className="text-white font-bold text-xl mb-1">{risk.label}</p>
-                  <p className="text-gray-400 text-sm mb-3">{risk.tip}</p>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between text-gray-400">
-                      <span>Engagement Rate</span>
-                      <span style={{ color: risk.color }} className="font-semibold">{data.engagementRate}%</span>
-                    </div>
-                    <div className="w-full rounded-full h-2" style={{ background: 'rgba(255,255,255,0.05)' }}>
-                      <div className="h-2 rounded-full transition-all duration-1000"
-                        style={{ width: `${Math.min(data.engagementRate * 10, 100)}%`, background: `linear-gradient(90deg, ${risk.color}80, ${risk.color})` }} />
-                    </div>
+          {/* Risk card */}
+          <ResultCard title="Risk Assessment">
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
+              <div style={{
+                width: 64, height: 64, flexShrink: 0,
+                borderRadius: 12,
+                background: `${risk.color}15`,
+                border: `1px solid ${risk.color}30`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: 'Syne, sans-serif',
+                fontSize: '1.25rem', fontWeight: 800,
+                color: risk.color,
+              }}>
+                {data.authenticityScore}
+              </div>
+              <div>
+                <div style={{ fontFamily: 'Syne, sans-serif', fontWeight: 700, fontSize: '1.1rem', color: 'var(--text)', marginBottom: 4 }}>{risk.label}</div>
+                <div style={{ fontSize: '0.8125rem', color: 'var(--text-3)', marginBottom: 12 }}>{risk.tip}</div>
+                {/* Progress */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-3)', flexShrink: 0 }}>Engagement: {data.engagementRate}%</span>
+                  <div className="progress-track" style={{ flex: 1 }}>
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${Math.min(data.engagementRate * 10, 100)}%`, background: risk.color }}
+                    />
                   </div>
                 </div>
               </div>
-              <div className="mt-5 pt-4 grid grid-cols-4 gap-2 text-center text-xs" style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}>
-                {[['0-1%','Very Poor','#EF4444'],['1-3%','Low','#F59E0B'],['3-6%','Good','#10B981'],['6%+','Excellent','#A78BFA']].map(([range, label, color]) => (
-                  <div key={label} className="rounded-xl p-2" style={{ background: `${color}10`, border: `1px solid ${color}20` }}>
-                    <div className="font-bold" style={{ color }}>{range}</div>
-                    <div className="text-gray-500">{label}</div>
-                  </div>
-                ))}
-              </div>
-            </ResultCard>
-          </div>
-        </ScrollReveal>
+            </div>
+
+            {/* Range grid */}
+            <div className="risk-grid">
+              {RISK_RANGES.map(({ range, label, color }) => (
+                <div key={label} className="risk-cell" style={{ background: `${color}08`, borderColor: `${color}20` }}>
+                  <div className="risk-range" style={{ color }}>{range}</div>
+                  <div className="risk-label">{label}</div>
+                </div>
+              ))}
+            </div>
+          </ResultCard>
+        </div>
       )}
     </div>
   );
