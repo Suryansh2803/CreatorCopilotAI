@@ -8,7 +8,7 @@ export async function generateJSON(prompt) {
   const fullPrompt = `${prompt}\n\nIMPORTANT: Return ONLY valid JSON. No markdown fences, no explanation, no extra text.`;
   const completion = await groq.chat.completions.create({
     messages: [{ role: 'user', content: fullPrompt }],
-    model: 'llama3-8b-8192',
+    model: 'llama-3.1-8b-instant',
     temperature: 0.7,
   });
   const text = completion.choices[0]?.message?.content?.trim() || '';
