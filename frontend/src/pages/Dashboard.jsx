@@ -145,12 +145,12 @@ export default function Dashboard() {
           <span className="chip chip-accent" style={{ fontFamily: 'Syne, sans-serif' }}>AI Creator Suite</span>
         </div>
         <h1 style={{
-          fontFamily: 'Syne, sans-serif',
+          fontFamily: '"Plus Jakarta Sans", sans-serif',
           fontSize: 'clamp(2.2rem, 5vw, 3.5rem)',
-          fontWeight: 800,
+          fontWeight: 850,
           color: 'var(--text)',
-          lineHeight: 1.08,
-          letterSpacing: '-0.03em',
+          lineHeight: 1.1,
+          letterSpacing: '-0.035em',
           marginTop: 14,
           maxWidth: 700,
         }}>

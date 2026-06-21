@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Syne:wght@600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -127,15 +127,19 @@ body::after {
   position: fixed;
   top: 0; left: 0;
   height: 100%;
-  width: 220px;
-  background: rgba(10, 10, 10, 0.72);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255,255,255,0.06);
+  width: 240px;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-right: 1px solid rgba(255,255,255,0.07);
   display: flex;
   flex-direction: column;
   z-index: 50;
+  transform: translateX(-100%);
   transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.sidebar.open {
+  transform: translateX(0);
 }
 
 /* ─── Nav link ─── */
@@ -176,8 +180,7 @@ body::after {
 /* ─── Topbar ─── */
 .topbar {
   position: fixed;
-  top: 0; right: 0;
-  left: 220px;
+  top: 0; right: 0; left: 0;
   height: 64px;
   background: rgba(10,10,10,0.85);
   backdrop-filter: blur(16px);
@@ -192,7 +195,7 @@ body::after {
 
 /* ─── Page wrapper ─── */
 .page-wrap {
-  margin-left: 220px;
+  margin-left: 0;
   padding-top: 64px;
   min-height: 100vh;
 }
@@ -679,9 +682,9 @@ body::after {
   backdrop-filter: blur(2px);
 }
 
-/* ─── Mobile topbar button ─── */
+/* ─── Topbar menu button ─── */
 .menu-btn {
-  display: none;
+  display: flex;
   align-items: center; justify-content: center;
   width: 32px; height: 32px;
   border-radius: 7px;
@@ -695,10 +698,5 @@ body::after {
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
-  .sidebar.open { transform: translateX(0); }
-  .topbar { left: 0; }
-  .page-wrap { margin-left: 0; }
-  .menu-btn { display: flex; }
   .page-inner, .page-inner-wide { padding: 24px 16px 60px; }
 }
