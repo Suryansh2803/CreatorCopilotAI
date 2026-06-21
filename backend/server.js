@@ -12,11 +12,11 @@ import authenticityRoutes from './routes/authenticity.routes.js';
 dotenv.config();
 
 // Validate required env vars
-if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') {
-  console.warn('\n⚠️  WARNING: GEMINI_API_KEY is not set in backend/.env');
-  console.warn('   AI features will fail. Get a free key at https://aistudio.google.com/\n');
+if (!process.env.GROQ_API_KEY) {
+  console.warn('\n⚠️  WARNING: GROQ_API_KEY is not set in backend/.env');
+  console.warn('   AI features will fail. Get a free key at https://console.groq.com/\n');
 } else {
-  console.log('✅ Gemini API key loaded');
+  console.log('✅ Groq API key loaded');
 }
 
 const app = express();
@@ -52,7 +52,7 @@ app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
     mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
-    gemini: (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'your_gemini_api_key_here') ? 'NOT SET' : 'configured'
+    groq: (!process.env.GROQ_API_KEY) ? 'NOT SET' : 'configured'
   });
 });
 

@@ -1,14 +1,17 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import Groq from 'groq-sdk';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 export async function generateJSON(prompt) {
   const fullPrompt = `${prompt}\n\nIMPORTANT: Return ONLY valid JSON. No markdown fences, no explanation, no extra text.`;
-  const result = await model.generateContent(fullPrompt);
-  const text = result.response.text().trim();
+  const completion = await groq.chat.completions.create({
+    messages: [{ role: 'user', content: fullPrompt }],
+    model: 'llama3-8b-8192',
+    temperature: 0.7,
+  });
+  const text = completion.choices[0]?.message?.content?.trim() || '';
   // Strip markdown fences if model includes them anyway
   const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
   return JSON.parse(cleaned);
