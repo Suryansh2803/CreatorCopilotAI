@@ -10,7 +10,7 @@ export default function HealthBanner() {
       .catch(() => setHealth({ status: 'unreachable' }));
   }, []);
 
-  if (!health || (health.gemini === 'configured' && health.mongodb === 'connected')) return null;
+  if (!health || (health.groq === 'configured' && health.mongodb === 'connected')) return null;
 
   return (
     <div className="health-banner">
@@ -24,9 +24,9 @@ export default function HealthBanner() {
             Backend not running — run <code style={{ background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: 4, fontSize: '0.75rem' }}>npm run dev</code> in the <code style={{ background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: 4, fontSize: '0.75rem' }}>backend/</code> folder
           </li>
         )}
-        {health.gemini === 'NOT SET' && (
+        {health.groq === 'NOT SET' && (
           <li style={{ fontSize: '0.8rem', color: '#d6b99a' }}>
-            GEMINI_API_KEY missing — add it to <code style={{ background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: 4, fontSize: '0.75rem' }}>backend/.env</code>
+            GROQ_API_KEY missing — add it to <code style={{ background: 'rgba(255,255,255,0.08)', padding: '1px 6px', borderRadius: 4, fontSize: '0.75rem' }}>backend/.env</code>
           </li>
         )}
         {health.mongodb === 'disconnected' && (
