@@ -158,7 +158,7 @@ export default function Dashboard() {
           <span style={{ color: 'var(--accent)' }}>for creators.</span>
         </h1>
         <p style={{ fontSize: '0.9375rem', color: 'var(--text-3)', marginTop: 16, maxWidth: 520, lineHeight: 1.65 }}>
-          Analyze profiles, generate content, find brand deals, and verify authenticity — all powered by AI.
+          Analyze profiles, generate content, find brand deals, and verify authenticity .
         </p>
         <div style={{ marginTop: 24 }}>
           <Link to="/profile">

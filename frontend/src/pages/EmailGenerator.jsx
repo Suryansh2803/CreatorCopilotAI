@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useApi from '../hooks/useApi';
 import { generateEmail } from '../services/api';
 import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
+import AnimatedResultCard from '../components/AnimatedResultCard';
 
 const FIELDS = [
   { key: 'name',      label: 'Your Name',   placeholder: 'John Doe' },
@@ -88,10 +88,10 @@ export default function EmailGenerator() {
 
       {data && (
         <div style={{ marginTop: 24 }}>
-          <ResultCard>
+          <AnimatedResultCard accentColor="#34d399" delay={0} showParticles={true}>
             {/* Toolbar */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-              <div className="result-card-title" style={{ marginBottom: 0 }}>Generated Email</div>
+              <div style={{ fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#34d399' }}>Generated Email</div>
               <div style={{ display: 'flex', gap: 8 }}>
                 <button onClick={copyEmail} className="btn-ghost" id="email-copy-btn">
                   <IconCopy />{copied ? 'Copied!' : 'Copy'}
@@ -113,7 +113,7 @@ export default function EmailGenerator() {
               <div className="email-label">Body</div>
               <p style={{ fontSize: '0.8375rem', color: 'var(--text-2)', whiteSpace: 'pre-wrap', lineHeight: 1.75 }}>{data.body}</p>
             </div>
-          </ResultCard>
+          </AnimatedResultCard>
         </div>
       )}
     </div>

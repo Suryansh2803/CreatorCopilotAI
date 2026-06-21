@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useApi from '../hooks/useApi';
 import { generateContent } from '../services/api';
 import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
+import AnimatedResultCard from '../components/AnimatedResultCard';
 
 const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
@@ -56,38 +56,38 @@ export default function ContentGenerator() {
         <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
             {/* Reel Ideas */}
-            <ResultCard title="Reel Ideas">
+            <AnimatedResultCard title="Reel Ideas" accentColor="#60a5fa" delay={0}>
               {data.reelIdeas?.map((r, i) => (
                 <div key={i} className="list-item">
                   <div className="list-item-num">{i + 1}</div>
                   <span>{r}</span>
                 </div>
               ))}
-            </ResultCard>
+            </AnimatedResultCard>
 
             {/* Post Ideas */}
-            <ResultCard title="Post Ideas">
+            <AnimatedResultCard title="Post Ideas" accentColor="#818cf8" delay={0.1}>
               {data.postIdeas?.map((p, i) => (
                 <div key={i} className="list-item">
                   <div className="list-item-num">{i + 1}</div>
                   <span>{p}</span>
                 </div>
               ))}
-            </ResultCard>
+            </AnimatedResultCard>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 12 }}>
             {/* Hashtags */}
-            <ResultCard title="Hashtags">
+            <AnimatedResultCard title="Hashtags" accentColor="#38bdf8" delay={0.2} showParticles={false}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {data.hashtags?.map((h, i) => (
                   <span key={i} className="chip chip-blue">#{h.replace(/^#/, '')}</span>
                 ))}
               </div>
-            </ResultCard>
+            </AnimatedResultCard>
 
             {/* Weekly Plan */}
-            <ResultCard title="Weekly Plan">
+            <AnimatedResultCard title="Weekly Plan" accentColor="#34d399" delay={0.3} showParticles={false}>
               {data.weeklyPlan?.map((d, i) => (
                 <div key={i} className="list-item" style={{ alignItems: 'flex-start' }}>
                   <span className="chip chip-accent" style={{ flexShrink: 0, minWidth: 36, textAlign: 'center' }}>
@@ -96,7 +96,7 @@ export default function ContentGenerator() {
                   <span style={{ lineHeight: 1.6 }}>{d.idea}</span>
                 </div>
               ))}
-            </ResultCard>
+            </AnimatedResultCard>
           </div>
         </div>
       )}

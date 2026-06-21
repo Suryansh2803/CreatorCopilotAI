@@ -46,7 +46,7 @@ export default function Sidebar({ open, onClose }) {
             </div>
             <div>
               <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '0.875rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1.2 }}>CreatorCopilot</div>
-              <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 1 }}>AI Suite</div>
+              <div style={{ fontSize: '0.65rem', color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginTop: 1 }}>Built for Creators</div>
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@ export default function Sidebar({ open, onClose }) {
         <div style={{ padding: '12px 16px', borderTop: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent)', flexShrink: 0 }} />
-            <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 500 }}>Powered by AI</span>
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-3)', fontWeight: 500 }}>All Features in One Place</span>
           </div>
         </div>
       </aside>

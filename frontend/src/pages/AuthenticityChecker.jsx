@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useApi from '../hooks/useApi';
 import { checkAuthenticity } from '../services/api';
 import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
+import AnimatedResultCard from '../components/AnimatedResultCard';
 import GaugeChart from '../components/GaugeChart';
 
 const RISK_CONFIG = {
@@ -83,16 +83,16 @@ export default function AuthenticityChecker() {
         <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 12 }}>
           {/* Gauge row */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
-            <ResultCard title="Engagement Rate">
+            <AnimatedResultCard title="Engagement Rate" accentColor={risk.color} delay={0}>
               <GaugeChart value={data.engagementRate} max={10} label="Rate %" color={risk.color} />
-            </ResultCard>
-            <ResultCard title="Authenticity Score">
+            </AnimatedResultCard>
+            <AnimatedResultCard title="Authenticity Score" accentColor={risk.color} delay={0.1}>
               <GaugeChart value={data.authenticityScore} max={100} label="Score / 100" color={risk.color} />
-            </ResultCard>
+            </AnimatedResultCard>
           </div>
 
           {/* Risk card */}
-          <ResultCard title="Risk Assessment">
+          <AnimatedResultCard title="Risk Assessment" accentColor={risk.color} delay={0.2}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, marginBottom: 20 }}>
               <div style={{
                 width: 64, height: 64, flexShrink: 0,
@@ -131,7 +131,7 @@ export default function AuthenticityChecker() {
                 </div>
               ))}
             </div>
-          </ResultCard>
+          </AnimatedResultCard>
         </div>
       )}
     </div>

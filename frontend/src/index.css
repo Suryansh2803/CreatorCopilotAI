@@ -28,11 +28,14 @@
 /* ─── Reset ─── */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 /* Lenis owns scrolling — native smooth-scroll would conflict */
-html { scroll-behavior: auto; }
+html { 
+  scroll-behavior: auto; 
+  background: var(--bg);
+}
 
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg);
+  background: transparent;
   color: var(--text);
   min-height: 100vh;
   overflow-x: hidden;
@@ -60,7 +63,7 @@ body {
 .bg-video-overlay-1 {
   position: absolute;
   inset: 0;
-  background: rgba(8, 8, 8, 0.78);
+  background: rgba(8, 8, 8, 0.4);
 }
 /* Vignette overlay — edges darker than center */
 .bg-video-overlay-2 {

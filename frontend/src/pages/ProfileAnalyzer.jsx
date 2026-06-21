@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useApi from '../hooks/useApi';
 import { analyzeProfile } from '../services/api';
 import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
+import AnimatedResultCard from '../components/AnimatedResultCard';
 import GaugeChart from '../components/GaugeChart';
 
 const FIELDS = [
@@ -76,14 +76,14 @@ export default function ProfileAnalyzer() {
       {data && (
         <div style={{ marginTop: 32, display: 'flex', flexDirection: 'column', gap: 16 }}>
           {/* Score gauge */}
-          <ResultCard title="Profile Score">
+          <AnimatedResultCard title="Profile Score" accentColor="#38bdf8" delay={0}>
             <GaugeChart value={data.score} label="Score / 100" color="var(--accent)" />
-          </ResultCard>
+          </AnimatedResultCard>
 
           {/* 4-section grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
-            {SECTIONS.map(({ key, label, icon, color }) => (
-              <ResultCard key={key} title={label}>
+            {SECTIONS.map(({ key, label, icon, color }, idx) => (
+              <AnimatedResultCard key={key} title={label} accentColor={color} delay={0.1 + idx * 0.1}>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   {data[key]?.map((item, i) => (
                     <div key={i} className="list-item">
@@ -92,7 +92,7 @@ export default function ProfileAnalyzer() {
                     </div>
                   ))}
                 </div>
-              </ResultCard>
+              </AnimatedResultCard>
             ))}
           </div>
         </div>

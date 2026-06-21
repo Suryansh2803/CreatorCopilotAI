@@ -2,7 +2,7 @@ import { useState } from 'react';
 import useApi from '../hooks/useApi';
 import { matchBrands } from '../services/api';
 import Loader from '../components/Loader';
-import ResultCard from '../components/ResultCard';
+import AnimatedResultCard from '../components/AnimatedResultCard';
 
 const FIELDS = [
   { key: 'niche',        label: 'Niche',         placeholder: 'Tech, Fitness…' },
@@ -71,13 +71,15 @@ export default function BrandFinder() {
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
             {data.brands.map((b, i) => (
-              <div key={i} className="result-card" style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
-                <div className="brand-initial">{b.name?.charAt(0)?.toUpperCase()}</div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{b.name}</div>
-                  <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', lineHeight: 1.6 }}>{b.reason}</p>
+              <AnimatedResultCard key={i} accentColor="#f59e0b" delay={i * 0.08} showParticles={i === 0}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 14 }}>
+                  <div className="brand-initial">{b.name?.charAt(0)?.toUpperCase()}</div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: 'Syne, sans-serif', fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>{b.name}</div>
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-3)', lineHeight: 1.6 }}>{b.reason}</p>
+                  </div>
                 </div>
-              </div>
+              </AnimatedResultCard>
             ))}
           </div>
         </div>
